@@ -1,0 +1,6 @@
+{
+  "flutter.provider.enableSnippet": true,
+  "suggest.autoTrigger": "always",
+  "diagnostic.virtualText": true,
+  "diagnostic.checkCurrentLine": true
+}
