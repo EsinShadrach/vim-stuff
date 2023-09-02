@@ -7,6 +7,7 @@ set nobackup
 set nowritebackup
 set updatetime=300
 set signcolumn=yes
+set title
 
 call plug#begin('~/.config/nvim/plugged')
     Plug 'kaicataldo/material.vim', { 'branch': 'main' }
@@ -26,7 +27,8 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'junegunn/fzf.vim'
     Plug 'joshdick/onedark.vim'
     Plug 'tpope/vim-commentary'
-call plug#end()
+    Plug 'git@github.com:wakatime/vim-wakatime.git'
+   call plug#end()
 
 nnoremap ff :Ag<CR>
 
@@ -70,6 +72,7 @@ let g:coc_settings = {
     \ }
 
 
+" Configuration for dashboard-nvim
 
 let g:material_theme_style = 'ocean'
 let g:material_terminal_italics = 1
@@ -80,8 +83,8 @@ let g:material_italic_variables = 1
 let g:material_italic_strings = 1
 let g:material_italic_builtins = 1
 colorscheme material
-" syntax on
-" colorscheme onedark
+
+let g:wakatime_api_key = 'waka_16b25d5d-3ecb-423d-a34e-d616c62b3069'
 
 " COC
 inoremap <silent><expr> <TAB>
