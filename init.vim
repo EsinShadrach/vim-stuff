@@ -9,6 +9,12 @@ set updatetime=300
 set signcolumn=yes
 set title
 
+function SetTitle()
+    let &titlestring = expand('%:t').' - NVIM'
+endfunction
+
+autocmd BufEnter,BufWritePost * call SetTitle()
+
 call plug#begin('~/.config/nvim/plugged')
     Plug 'kaicataldo/material.vim', { 'branch': 'main' }
     Plug 'preservim/nerdtree'
@@ -27,10 +33,44 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'junegunn/fzf.vim'
     Plug 'joshdick/onedark.vim'
     Plug 'tpope/vim-commentary'
+    Plug 'mhinz/vim-startify'
     Plug 'git@github.com:wakatime/vim-wakatime.git'
    call plug#end()
 
 nnoremap ff :Ag<CR>
+" Start Screen Config
+
+function! s:gitModified()
+    let files = systemlist('git ls-files -m 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
+
+" same as above, but show untracked files, honouring .gitignore
+function! s:gitUntracked()
+    let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
+
+" Read ~/.NERDTreeBookmarks file and takes its second column
+function! s:nerdtreeBookmarks()
+    let bookmarks = systemlist("cut -d' ' -f 2- ~/.NERDTreeBookmarks")
+    let bookmarks = bookmarks[0:-2] " Slices an empty last line
+    return map(bookmarks, "{'line': v:val, 'path': v:val}")
+endfunction
+
+let g:startify_custom_header =
+       \ startify#pad(split(system('toilet -f bigmono9 -t "R A F E"'), '\n'))
+
+let g:startify_lists = [
+    \ { 'type': function('s:nerdtreeBookmarks'), 'header': ['   ~Bookmarks']},
+    \ { 'type': 'files',     'header': ['   ~Recent Files']            },
+    \ { 'type': 'dir',       'header': ['   '. getcwd()] },
+    \ { 'type': 'sessions',  'header': ['   ~Sessions']       },
+    \ { 'type': 'bookmarks', 'header': ['   ~Bookmarks']      },
+    \ { 'type': function('s:gitModified'),  'header': ['   ~git modified']},
+    \ { 'type': function('s:gitUntracked'), 'header': ['   ~git untracked']},
+    \ { 'type': 'commands',  'header': ['   Commands']       },
+    \ ]
 
 if (has('nvim'))
     let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
@@ -47,6 +87,8 @@ let mapleader = ","
 nmap <Leader>n :NERDTreeToggle<CR>
 let NERDTreeShowHidden=1 " Show hidden files by default
 let NERDTreeIgnore=['\.git$', '\.swp$']
+" Automatically create a NERDTree bookmark for the current directory when opening a directory
+autocmd BufEnter,DirChanged * if isdirectory(expand('%')) | NERDTree | execute 'Bookmark' | NERDTreeToggle | endif
 " Enable nerdtree-git-plugin
 let g:NERDTreeGitStatusIndicatorMapCustom = {
     \ "Modified"  : "✹",
@@ -84,9 +126,9 @@ let g:material_italic_strings = 1
 let g:material_italic_builtins = 1
 colorscheme material
 
-let g:wakatime_api_key = 'waka_16b25d5d-3ecb-423d-a34e-d616c62b3069'
+let g:wakatime_api_key = "waka_22293130-6add-483d-a3c3-0a3fe3b93e90"
 
-" COC
+"COC Commands
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
