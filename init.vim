@@ -1,7 +1,8 @@
+set mouse=a
 set number
 set nowrap
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set expandtab
 set nobackup
 set nowritebackup
@@ -9,57 +10,76 @@ set updatetime=300
 set signcolumn=yes
 set title
 
+let g:tagalong_verbose = 1
 function SetTitle()
-    let &titlestring = expand('%:t').' - NVIM'
+  let &titlestring = expand('%:t').' - NVIM'
 endfunction
 
 autocmd BufEnter,BufWritePost * call SetTitle()
 
 call plug#begin('~/.config/nvim/plugged')
-    Plug 'kaicataldo/material.vim', { 'branch': 'main' }
-    Plug 'preservim/nerdtree'
-    Plug 'ryanoasis/vim-devicons'
-    Plug 'Xuyuanp/nerdtree-git-plugin'
-    Plug 'mattn/emmet-vim'
-    Plug 'tpope/vim-fugitive'
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    Plug 'iamcco/coc-tailwindcss',  {'do': 'yarn install --frozen-lockfile && yarn run build'}
-    Plug 'jiangmiao/auto-pairs'
-    Plug 'ap/vim-css-color',
-    Plug 'dart-lang/dart-vim-plugin'
-    Plug 'vim-airline/vim-airline'
-    Plug 'airblade/vim-gitgutter'
-    Plug 'junegunn/fzf'
-    Plug 'junegunn/fzf.vim'
-    Plug 'joshdick/onedark.vim'
-    Plug 'tpope/vim-commentary'
-    Plug 'mhinz/vim-startify'
-    Plug 'git@github.com:wakatime/vim-wakatime.git'
-   call plug#end()
+  Plug 'kaicataldo/material.vim', { 'branch': 'main' }
+  Plug 'preservim/nerdtree'
+  Plug 'ryanoasis/vim-devicons'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+  Plug 'mattn/emmet-vim'
+  Plug 'tpope/vim-fugitive'
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'iamcco/coc-tailwindcss',  {'do': 'yarn install --frozen-lockfile && yarn run build'}
+  Plug 'jiangmiao/auto-pairs'
+  Plug 'ap/vim-css-color',
+  Plug 'dart-lang/dart-vim-plugin'
+  Plug 'vim-airline/vim-airline'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'junegunn/fzf'
+  Plug 'junegunn/fzf.vim'
+  Plug 'airblade/vim-rooter'
+  Plug 'joshdick/onedark.vim'
+  Plug 'tpope/vim-commentary'
+  Plug 'mhinz/vim-startify'
+  Plug 'git@github.com:wakatime/vim-wakatime.git'
+  Plug 'andrewradev/tagalong.vim'
+  Plug 'tpope/vim-surround'
+  Plug 'vim-python/python-syntax'
+call plug#end()
 
-nnoremap ff :Ag<CR>
+nnoremap ff :Rg<CR>
 " Start Screen Config
 
+" The `<c-u>` removes the current visual mode, so a function can be called
+xnoremap <buffer> p :<c-u>call <SID>Paste()<cr>
+
+" The <SID> above is the same as the s: here
+function! s:Paste()
+  call tagalong#Trigger()
+
+  " gv reselects the previously-selected area, and then we just paste
+  normal! gvp
+
+  call tagalong#Apply()
+endfunction
+
+
 function! s:gitModified()
-    let files = systemlist('git ls-files -m 2>/dev/null')
-    return map(files, "{'line': v:val, 'path': v:val}")
+  let files = systemlist('git ls-files -m 2>/dev/null')
+  return map(files, "{'line': v:val, 'path': v:val}")
 endfunction
 
 " same as above, but show untracked files, honouring .gitignore
 function! s:gitUntracked()
-    let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
-    return map(files, "{'line': v:val, 'path': v:val}")
+  let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
+  return map(files, "{'line': v:val, 'path': v:val}")
 endfunction
 
 " Read ~/.NERDTreeBookmarks file and takes its second column
 function! s:nerdtreeBookmarks()
-    let bookmarks = systemlist("cut -d' ' -f 2- ~/.NERDTreeBookmarks")
-    let bookmarks = bookmarks[0:-2] " Slices an empty last line
-    return map(bookmarks, "{'line': v:val, 'path': v:val}")
+  let bookmarks = systemlist("cut -d' ' -f 2- ~/.NERDTreeBookmarks")
+  let bookmarks = bookmarks[0:-2] " Slices an empty last line
+  return map(bookmarks, "{'line': v:val, 'path': v:val}")
 endfunction
 
 let g:startify_custom_header =
-       \ startify#pad(split(system('toilet -f bigmono9 -t "R A F E"'), '\n'))
+       \ startify#pad(split(system('figlet -w 120 R A F E'), '\n'))
 
 let g:startify_lists = [
     \ { 'type': function('s:nerdtreeBookmarks'), 'header': ['   ~Bookmarks']},
@@ -126,9 +146,9 @@ let g:material_italic_strings = 1
 let g:material_italic_builtins = 1
 colorscheme material
 
-let g:wakatime_api_key = "waka_22293130-6add-483d-a3c3-0a3fe3b93e90"
+let g:wakatime_api_key = "waka_356d1184-ca0b-4c65-b5c0-58e00febfa35"
 
-"COC Commands
+" COC Commands
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
@@ -281,4 +301,3 @@ endfunction
 
 " Map Shift + Alt + O to run the organizeImport command
 nmap <S-A-O> :CocCommand editor.action.organizeImport<CR>
-

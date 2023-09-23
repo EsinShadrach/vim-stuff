@@ -2,5 +2,13 @@
   "flutter.provider.enableSnippet": true,
   "suggest.autoTrigger": "always",
   "diagnostic.virtualText": true,
-  "diagnostic.checkCurrentLine": true
+  "diagnostic.checkCurrentLine": true,
+  "flutter.runDevToolsAtStartup": true,
+  "flutter.autoHideDevLog": true,
+  "flutter.autoOpenDevLog": true,
+  "python.autoComplete.addBrackets": true,
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.pylintPath": "pylint",
+  "python.linting.pylintArgs": ["--rcfile=.pylintrc"]
 }
