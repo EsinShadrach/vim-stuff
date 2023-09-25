@@ -41,6 +41,8 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'andrewradev/tagalong.vim'
   Plug 'tpope/vim-surround'
   Plug 'vim-python/python-syntax'
+  Plug 'voldikss/vim-floaterm'
+  Plug 'lukas-reineke/indent-blankline.nvim'
 call plug#end()
 
 nnoremap ff :Rg<CR>
@@ -146,7 +148,7 @@ let g:material_italic_strings = 1
 let g:material_italic_builtins = 1
 colorscheme material
 
-let g:wakatime_api_key = "waka_356d1184-ca0b-4c65-b5c0-58e00febfa35"
+let g:wakatime_api_key = "waka_ddef1c0d-0dd1-45b7-92be-de10c918d66b"
 
 " COC Commands
 inoremap <silent><expr> <TAB>
@@ -301,3 +303,30 @@ endfunction
 
 " Map Shift + Alt + O to run the organizeImport command
 nmap <S-A-O> :CocCommand editor.action.organizeImport<CR>
+
+
+" Toggle the floaterm with F12 (you can use any key binding you prefer)
+nnoremap <F12> :FloatermToggle<CR>
+
+" Open a new floaterm with the default shell
+nnoremap <F9> :FloatermNew<CR>
+
+" Open a new floaterm with a specific shell (e.g., bash)
+nnoremap <F10> :FloatermNew bash<CR>
+tnoremap <C-w>q <C-\><C-n>:q<CR>
+
+" Enable the display of special characters for whitespace and EOL
+set list
+" Configure listchars to display space as ⋅ and EOL as ↴
+set listchars+=space:⋅
+set listchars+=eol:↴
+
+" Configure the "indent-blankline.nvim" plugin
+lua << EOF
+require("indent_blankline").setup {
+    space_char_blankline = " ",
+    show_current_context = true,
+    show_current_context_start = true,
+}
+EOF
+
