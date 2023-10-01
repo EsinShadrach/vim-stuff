@@ -9,13 +9,37 @@ set nowritebackup
 set updatetime=300
 set signcolumn=yes
 set title
+set list
+set listchars+=space:⋅
+set listchars+=eol:↴
+set termguicolors
+set background=dark
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 let g:tagalong_verbose = 1
+
 function SetTitle()
   let &titlestring = expand('%:t').' - NVIM'
 endfunction
 
 autocmd BufEnter,BufWritePost * call SetTitle()
+
+
+nnoremap ff :Rg<CR>
+" Start Screen Config
+
+" The `<c-u>` removes the current visual mode, so a function can be called
+xnoremap <buffer> p :<c-u>call <SID>Paste()<cr>
+
+" The <SID> above is the same as the s: here
+function! s:Paste()
+  call tagalong#Trigger()
+
+  " gv reselects the previously-selected area, and then we just paste
+  normal! gvp
+
+  call tagalong#Apply()
+endfunction
 
 call plug#begin('~/.config/nvim/plugged')
   Plug 'kaicataldo/material.vim', { 'branch': 'main' }
@@ -40,27 +64,10 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'git@github.com:wakatime/vim-wakatime.git'
   Plug 'andrewradev/tagalong.vim'
   Plug 'tpope/vim-surround'
-  Plug 'vim-python/python-syntax'
   Plug 'voldikss/vim-floaterm'
   Plug 'lukas-reineke/indent-blankline.nvim'
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 call plug#end()
-
-nnoremap ff :Rg<CR>
-" Start Screen Config
-
-" The `<c-u>` removes the current visual mode, so a function can be called
-xnoremap <buffer> p :<c-u>call <SID>Paste()<cr>
-
-" The <SID> above is the same as the s: here
-function! s:Paste()
-  call tagalong#Trigger()
-
-  " gv reselects the previously-selected area, and then we just paste
-  normal! gvp
-
-  call tagalong#Apply()
-endfunction
-
 
 function! s:gitModified()
   let files = systemlist('git ls-files -m 2>/dev/null')
@@ -125,17 +132,6 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
     \ "Unknown"   : "?"
     \ }
 
-let g:coc_settings = {
-    \ "coc-tailwindcss.enable": "true",
-    \ "coc-tailwindcss.emmetCompletions": "true",
-    \ "coc-tailwindcss.showClassSuggestions.enabled": "true",
-    \ "coc-tailwindcss.showClassSuggestions.classNames": "[]",
-    \ "coc-tailwindcss.cssLanguages": [ "css", "less", "postcss", "sass", "scss", "stylus", "vue" ],
-    \ "coc-tailwindcss.jsLanguages": [ "javascript", "javascriptreact", "reason", "typescriptreact" ],
-    \ "coc-tailwindcss.htmlLanguages": [ "blade", "edge", "eelixir", "ejs", "elixir", "elm", "erb", "eruby", "haml", "handlebars", "htmldjango", "html", "HTML (EEx)", "HTML (Eex)", "html.twig", "jade", "leaf", "markdown", "njk", "nunjucks", "php", "razor", "slim", "svelte", "twig", "vue" ],
-    \ }
-
-
 " Configuration for dashboard-nvim
 
 let g:material_theme_style = 'ocean'
@@ -148,7 +144,6 @@ let g:material_italic_strings = 1
 let g:material_italic_builtins = 1
 colorscheme material
 
-let g:wakatime_api_key = "waka_ddef1c0d-0dd1-45b7-92be-de10c918d66b"
 
 " COC Commands
 inoremap <silent><expr> <TAB>
@@ -262,11 +257,6 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 " Add `:OR` command for organize imports of the current buffer
 command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
 
-" Add (Neo)Vim's native statusline support
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
 " Mappings for CoCList
 " Show all diagnostics
 nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
@@ -315,18 +305,5 @@ nnoremap <F9> :FloatermNew<CR>
 nnoremap <F10> :FloatermNew bash<CR>
 tnoremap <C-w>q <C-\><C-n>:q<CR>
 
-" Enable the display of special characters for whitespace and EOL
-set list
-" Configure listchars to display space as ⋅ and EOL as ↴
-set listchars+=space:⋅
-set listchars+=eol:↴
-
-" Configure the "indent-blankline.nvim" plugin
-lua << EOF
-require("indent_blankline").setup {
-    space_char_blankline = " ",
-    show_current_context = true,
-    show_current_context_start = true,
-}
-EOF
+let g:tshighlight_enable = 1
 
