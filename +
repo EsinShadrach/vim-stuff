@@ -1,0 +1,305 @@
+-- Set mouse to "a" (all modes)
+vim.o.mouse = "a"
+
+-- Enable line numbers
+vim.wo.number = true
+
+-- Disable line wrapping
+vim.wo.wrap = false
+
+-- Set tab width and indentation level to 2 spaces
+vim.bo.tabstop = 2
+vim.bo.shiftwidth = 2
+vim.bo.expandtab = true
+
+-- Disable backup and write backup files
+vim.o.backup = false
+vim.o.writebackup = false
+
+-- Set the update time interval
+vim.o.updatetime = 300
+
+-- Enable sign column
+vim.wo.signcolumn = "yes"
+
+-- Set the window title
+vim.o.title = true
+
+-- Enable displaying whitespace characters (listchars)
+vim.wo.list = true
+vim.o.listchars = "space:⋅,eol:↴"
+
+-- Enable true color support
+vim.o.termguicolors = true
+
+-- Set the background to dark
+vim.o.background = "dark"
+
+-- Configure statusline using coc.nvim
+vim.o.statusline = "%{coc#status()}%{get(b:,'coc_current_function','')}"
+
+-- Set tagalong verbosity
+vim.g.tagalong_verbose = 1
+
+-- Function to set the titlestring
+function set_title()
+  vim.o.titlestring = vim.fn.expand('%:t') .. ' - NVIM'
+end
+
+-- Autocommand to set the title when entering a buffer or writing
+vim.cmd([[
+  autocmd BufEnter,BufWritePost * lua set_title()
+]])
+
+-- Keymapping for fuzzy find (Rg, which is Ripgrep)
+vim.cmd([[
+  nnoremap ff :Rg<CR>
+]])
+
+-- Start configuring plugins using Packer.nvim
+local packer = require('packer')
+packer.startup(function()
+  -- Packer.nvim itself
+  use 'wbthomason/packer.nvim'
+
+  -- Colorscheme (material.vim)
+  use 'kaicataldo/material.vim'
+
+  -- File explorer (NERDTree)
+  use 'preservim/nerdtree'
+  use 'ryanoasis/vim-devicons'
+  use 'Xuyuanp/nerdtree-git-plugin'
+
+  -- Emmet
+  use 'mattn/emmet-vim'
+
+  -- Git integration (vim-fugitive)
+  use 'tpope/vim-fugitive'
+
+  -- LSP and autocomplete (coc.nvim)
+  use {'neoclide/coc.nvim', branch = 'release'}
+  use {'iamcco/coc-tailwindcss', run = 'yarn install --frozen-lockfile && yarn run build'}
+
+  -- Auto-pairs
+  use 'jiangmiao/auto-pairs'
+
+  -- CSS color preview
+  use 'ap/vim-css-color'
+
+  -- Dart support
+  use 'dart-lang/dart-vim-plugin'
+
+  -- Statusline (vim-airline)
+  use 'vim-airline/vim-airline'
+
+  -- Git diff in the gutter (vim-gitgutter)
+  use 'airblade/vim-gitgutter'
+
+  -- Fuzzy finder (FZF)
+  use 'junegunn/fzf'
+  use 'junegunn/fzf.vim'
+
+  -- Auto-change working directory to project root (vim-rooter)
+  use 'airblade/vim-rooter'
+
+  -- One Dark colorscheme
+  use 'joshdick/onedark.vim'
+
+  -- Commenting code (vim-commentary)
+  use 'tpope/vim-commentary'
+
+  -- Startify: Start screen
+  use 'mhinz/vim-startify'
+
+  -- Wakatime integration
+  use 'git@github.com:wakatime/vim-wakatime.git'
+
+  -- Tagalong: Simplified text object creation
+  use 'andrewradev/tagalong.vim'
+
+  -- Surround: Add, change, or delete surroundings in pairs
+  use 'tpope/vim-surround'
+
+  -- Floating terminal (vim-floaterm)
+  use 'voldikss/vim-floaterm'
+
+  -- Indentation lines (indent-blankline.nvim)
+  use 'lukas-reineke/indent-blankline.nvim'
+
+  -- Treesitter: Code parsing and highlighting
+  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+end)
+
+-- Configure custom headers and lists for startify
+vim.g.startify_custom_header = {
+  vim.fn.system('figlet -w 120 R A F E')
+}
+
+vim.g.startify_lists = {
+  { type = function() return s:nerdtreeBookmarks() end, header = {'   ~Bookmarks'} },
+  { type = 'files', header = {'   ~Recent Files'} },
+  { type = 'dir', header = {'   ' .. vim.fn.getcwd()} },
+  { type = 'sessions', header = {'   ~Sessions'} },
+  { type = 'bookmarks', header = {'   ~Bookmarks'} },
+  { type = function() return s:gitModified() end, header = {'   ~git modified'} },
+  { type = function() return s:gitUntracked() end, header = {'   ~git untracked'} },
+  { type = 'commands', header = {'   Commands'} }
+}
+
+-- Enable true color support if available
+if vim.fn.has('nvim') then
+  vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
+end
+
+-- Additional configuration goes here...
+
+-- Lua function for BufEnter/BufWritePost autocmd to set the title
+function set_title()
+  vim.o.titlestring = vim.fn.expand('%:t') .. ' - NVIM'
+end
+
+-- Autocommand to set the title when entering a buffer or writing
+vim.cmd([[
+  autocmd BufEnter,BufWritePost * lua set_title()
+]])
+
+-- Keymapping for fuzzy find (Rg, which is Ripgrep)
+vim.cmd([[
+  nnoremap ff :Rg<CR>
+]])
+
+-- Custom function to run appropriate formatting command
+function coc_format()
+  if vim.bo.filetype == 'dart' then
+    vim.cmd('DartFmt')
+  else
+    vim.fn['CocAction']('prettier.forceFormatDocument')
+  end
+end
+
+-- Keymapping for formatting (Ctrl + P)
+vim.cmd([[
+  nnoremap <c-p> :lua coc_format()<CR>
+]])
+
+-- Keymapping for organizing imports (Shift + Alt + O)
+vim.cmd([[
+  nmap <S-A-O> :CocCommand editor.action.organizeImport<CR>
+]])
+
+-- Keymapping for toggling the floaterm (F12)
+vim.cmd([[
+  nnoremap <F12> :FloatermToggle<CR>
+]])
+
+-- Keymapping for opening a new floaterm with the default shell (F9)
+vim.cmd([[
+  nnoremap <F9> :FloatermNew<CR>
+]])
+
+-- Keymapping for opening a new floaterm with a specific shell (F10, e.g., bash)
+vim.cmd([[
+  nnoremap <F10> :FloatermNew bash<CR>
+]])
+
+-- Keymapping to close terminal with Ctrl-W q
+vim.api.nvim_set_keymap('t', '<C-w>q', '<C-\\><C-n>:q<CR>', { noremap = true })
+
+-- Additional configuration and mappings go here...
+
+-- Function to highlight the symbol and its references when holding the cursor
+vim.cmd([[
+  autocmd CursorHold * silent lua vim.fn['CocActionAsync']('highlight')
+]])
+
+-- Function to show documentation in a preview window (K key)
+function show_documentation()
+  if vim.fn['CocAction']('hasProvider', 'hover') then
+    vim.fn['CocActionAsync']('doHover')
+  else
+    vim.api.nvim_feedkeys('K', 'n', true)
+  end
+end
+
+-- Keymapping to show documentation (K key)
+vim.api.nvim_set_keymap('n', 'K', [[:lua show_documentation()<CR>]], { noremap = true, silent = true })
+
+-- Symbol renaming (leader key + rn)
+vim.api.nvim_set_keymap('n', '<leader>rn', [[:lua vim.fn['CocAction']('rename')<CR>]], { noremap = true, silent = true })
+
+-- Mapping for applying code actions to the selected code block
+-- (leader key + a + a + p, similar to nnoremap <leader>aap)
+vim.api.nvim_set_keymap('x', '<leader>aap', [[:lua vim.fn['CocAction']('codeAction')<CR>]], { noremap = true, silent = true })
+
+-- Applying code actions at the cursor position
+vim.api.nvim_set_keymap('n', '<leader>ac', [[:lua vim.fn['CocAction']('codeAction')<CR>]], { noremap = true, silent = true })
+
+-- Applying code actions affecting the whole buffer
+vim.api.nvim_set_keymap('n', '<leader>as', [[:lua vim.fn['CocAction']('codeAction')<CR>]], { noremap = true, silent = true })
+
+-- Applying the most preferred quickfix action to fix diagnostics on the current line
+vim.api.nvim_set_keymap('n', '<leader>qf', [[:lua vim.fn['CocAction']('quickfix')<CR>]], { noremap = true, silent = true })
+
+-- Applying refactor code actions
+vim.api.nvim_set_keymap('n', '<leader>re', [[:lua vim.fn['CocAction']('codeAction')<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', '<leader>r', [[:lua vim.fn['CocAction']('codeAction')<CR>]], { noremap = true, silent = true })
+
+-- Run the Code Lens action on the current line
+vim.api.nvim_set_keymap('n', '<leader>cl', [[:lua vim.fn['CocAction']('codelens')<CR>]], { noremap = true, silent = true })
+
+-- Map function and class text objects (requires 'textDocument.documentSymbol' support from the language server)
+vim.api.nvim_set_keymap('x', 'if', [[:lua vim.fn['CocAction']('textDocument.documentSymbol')<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('o', 'if', [[:<C-u>lua vim.fn['CocAction']('textDocument.documentSymbol')<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', 'af', [[:lua vim.fn['CocAction']('textDocument.documentSymbol')<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('o', 'af', [[:<C-u>lua vim.fn['CocAction']('textDocument.documentSymbol')<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', 'ic', [[:lua vim.fn['CocAction']('textDocument.documentSymbol')<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('o', 'ic', [[:<C-u>lua vim.fn['CocAction']('textDocument.documentSymbol')<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', 'ac', [[:lua vim.fn['CocAction']('textDocument.documentSymbol')<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('o', 'ac', [[:<C-u>lua vim.fn['CocAction']('textDocument.documentSymbol')<CR>]], { noremap = true, silent = true })
+
+-- Key mappings for scrolling float windows/popups
+if vim.fn.has('nvim-0.4.0') or vim.fn.has('patch-8.2.0750') then
+  vim.api.nvim_set_keymap('n', '<C-f>', [[:lua vim.fn['CocActionAsync']('scroll', 1)<CR>]], { noremap = true, silent = true, nowait = true, expr = true })
+  vim.api.nvim_set_keymap('n', '<C-b>', [[:lua vim.fn['CocActionAsync']('scroll', 0)<CR>]], { noremap = true, silent = true, nowait = true, expr = true })
+  vim.api.nvim_set_keymap('i', '<C-f>', [[:<C-r>=coc#float#scroll(1)<CR>]], { noremap = true, silent = true, nowait = true, expr = true })
+  vim.api.nvim_set_keymap('i', '<C-b>', [[:<C-r>=coc#float#scroll(0)<CR>]], { noremap = true, silent = true, nowait = true, expr = true })
+  vim.api.nvim_set_keymap('x', '<C-f>', [[:lua vim.fn['CocActionAsync']('scroll', 1)<CR>]], { noremap = true, silent = true, nowait = true, expr = true })
+  vim.api.nvim_set_keymap('x', '<C-b>', [[:lua vim.fn['CocActionAsync']('scroll', 0)<CR>]], { noremap = true, silent = true, nowait = true, expr = true })
+end
+
+-- Keymapping for selections using CTRL-S
+vim.api.nvim_set_keymap('x', '<C-s>', [[:lua vim.fn['CocAction']('selectionRange')<CR>]], { noremap = true, silent = true, nowait = true, expr = true })
+
+-- Add ":Format" command to format the current buffer
+vim.cmd([[
+  command! -nargs=0 Format :lua coc_format()<CR>
+]])
+
+-- Add ":Fold" command to fold the current buffer
+vim.cmd([[
+  command! -nargs=? Fold :lua vim.fn['CocAction']('fold', '<f-args>')<CR>
+]])
+
+-- Add ":OR" command for organizing imports in the current buffer
+vim.cmd([[
+  command! -nargs=0 OR :lua vim.fn['CocActionAsync']('runCommand', 'editor.action.organizeImport')<CR>
+]])
+
+-- Mappings for CoCList
+-- Show all diagnostics
+vim.api.nvim_set_keymap('n', '<space>a', [[:CocList diagnostics<CR>]], { noremap = true, silent = true })
+-- Manage extensions
+vim.api.nvim_set_keymap('n', '<space>e', [[:CocList extensions<CR>]], { noremap = true, silent = true })
+-- Show commands
+vim.api.nvim_set_keymap('n', '<space>c', [[:CocList commands<CR>]], { noremap = true, silent = true })
+-- Find symbol of the current document
+vim.api.nvim_set_keymap('n', '<space>o', [[:CocList outline<CR>]], { noremap = true, silent = true })
+-- Search workspace symbols
+vim.api.nvim_set_keymap('n', '<space>s', [[:CocList -I symbols<CR>]], { noremap = true, silent = true })
+-- Do default action for the next item
+vim.api.nvim_set_keymap('n', '<space>j', [[:CocNext<CR>]], { noremap = true, silent = true })
+-- Do default action for the previous item
+vim.api.nvim_set_keymap('n', '<space>k', [[:CocPrev<CR>]], { noremap = true, silent = true })
+-- Resume latest Coc list
+vim.api.nvim_set_keymap('n', '<space>p', [[:CocListResume<CR>]], { noremap = true, silent = true })
+vim.vim.vim

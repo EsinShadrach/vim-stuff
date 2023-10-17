@@ -1,4 +1,6 @@
 {
+  "refactor.saveToFile": true,
+  "coc.preferences.formatOnSave": true,
   "flutter.provider.enableSnippet": true,
   "suggest.autoTrigger": "always",
   "diagnostic.virtualText": true,
@@ -9,6 +11,7 @@
   "python.autoComplete.addBrackets": true,
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
+  "python.formatting.provider": "autopep8",
   "python.linting.pylintPath": "pylint",
   "python.linting.pylintArgs": ["--rcfile=.pylintrc"],
   "languageserver": {
@@ -68,4 +71,6 @@
   "tailwindCSS.suggestions": true,
   "tailwindCSS.headwind.runOnSave": true,
   "tailwindCSS.showPixelEquivalents": true,
-  "tailwindCSS.colorDecorators": true
+  "tailwindCSS.colorDecorators": true,
+  "snippets.ultisnips.pythonPrompt": false
+}

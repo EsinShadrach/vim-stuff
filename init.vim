@@ -14,7 +14,6 @@ set listchars+=space:⋅
 set listchars+=eol:↴
 set termguicolors
 set background=dark
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 let g:tagalong_verbose = 1
 
@@ -24,9 +23,7 @@ endfunction
 
 autocmd BufEnter,BufWritePost * call SetTitle()
 
-
 nnoremap ff :Rg<CR>
-" Start Screen Config
 
 " The `<c-u>` removes the current visual mode, so a function can be called
 xnoremap <buffer> p :<c-u>call <SID>Paste()<cr>
@@ -67,6 +64,8 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'voldikss/vim-floaterm'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'jbgutierrez/vim-better-comments'
+  Plug 'rust-lang/rust.vim'
 call plug#end()
 
 function! s:gitModified()
@@ -88,7 +87,7 @@ function! s:nerdtreeBookmarks()
 endfunction
 
 let g:startify_custom_header =
-       \ startify#pad(split(system('figlet -w 120 R A F E'), '\n'))
+       \ startify#pad(split(system('figlet "R A F E    -    E S I N"'), '\n'))
 
 let g:startify_lists = [
     \ { 'type': function('s:nerdtreeBookmarks'), 'header': ['   ~Bookmarks']},
@@ -134,7 +133,7 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
 
 " Configuration for dashboard-nvim
 
-let g:material_theme_style = 'ocean'
+let g:material_theme_style = 'ocean-community'
 let g:material_terminal_italics = 1
 let g:material_italic_comments = 1
 let g:material_italic_keywords = 1
@@ -275,6 +274,7 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume lates= coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Autocmd for Saving Files
 autocmd BufWritePost * call CocFormat()
@@ -286,7 +286,7 @@ nnoremap <c-p> :call CocFormat()<CR>
 function! CocFormat() abort
   if &filetype == 'dart'
       :DartFmt
-  else
+   else
       CocCommand prettier.forceFormatDocument
   endif
 endfunction
@@ -305,5 +305,7 @@ nnoremap <F9> :FloatermNew<CR>
 nnoremap <F10> :FloatermNew bash<CR>
 tnoremap <C-w>q <C-\><C-n>:q<CR>
 
-let g:tshighlight_enable = 1
 
+" Enable Vim-Rooter
+let g:rooter_manual_only = 1 " Only change the working directory manually
+let g:rust_clip_command = 'xclip -selection clipboard'
