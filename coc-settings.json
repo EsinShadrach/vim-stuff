@@ -1,4 +1,5 @@
 {
+  "prettier.tabWidth": 2,
   "refactor.saveToFile": true,
   "coc.preferences.formatOnSave": true,
   "flutter.provider.enableSnippet": true,
@@ -72,5 +73,8 @@
   "tailwindCSS.headwind.runOnSave": true,
   "tailwindCSS.showPixelEquivalents": true,
   "tailwindCSS.colorDecorators": true,
-  "snippets.ultisnips.pythonPrompt": false
+  "snippets.ultisnips.pythonPrompt": false,
+  "rust-analyzer.enable": true,
+  "rust-analyzer.lens.run.enable": true,
+  "rust-analyzer.checkOnSave": true
 }
